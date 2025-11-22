@@ -6,45 +6,42 @@ on:
     - develop
 
 jobs:
-  # 1. TRABAJO DE INTEGRACIÓN CONTINUA (CI): Instala y Ejecuta Pruebas
   tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
-        
       - name: Configurar Node.js
         uses: actions/setup-node@v4
-          
       - name: Instalar dependencias
-        run: npm ci
-        
-      - name: Forzar permisos de Ejecución
-        run: |
-          # Forzar permisos para el binario de JSDoc
-          chmod +x ./node_modules/.bin/jsdoc
-      
+        run: npm ci # Instalación necesaria para que Jest funcione
       - name: Ejecutar Pruebas Unitarias
-        # Usa el script 'test' definido en tu package.json
         run: npm run test
         
-  # 2. TRABAJO DE DESPLIEGUE CONTINUO (CD)
   deploy:
-    needs: tests # SOLO se ejecuta si el trabajo 'tests' fue exitoso
+    needs: tests 
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
         
-      - name: Configurar Node.js (Necesario para el 'deploy' job)
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+      # 🚨 PASO FALTANTE: Instalar dependencias de nuevo en este job 🚨
+      - name: Instalar dependencias para JSDoc y despliegue
+        run: npm ci
+
+      # 🚨 PASO FALTANTE: Forzar permisos de nuevo en este job 🚨
+      - name: Forzar permisos de Ejecución para JSDoc
+        run: chmod +x ./node_modules/.bin/jsdoc
+
       # GENERACIÓN DE DOCUMENTACIÓN
       - name: Generar Documentación JSDoc (crea la carpeta 'docs/')
-        # ¡IMPORTANTE! Reemplaza 'your-main-code-file.js' por el nombre de tu archivo de código principal.
+        # Ahora JSDoc tiene el binario instalado y los permisos concedidos
         run: npx jsdoc src/js/index.js -d docs
         
       # CONFIGURACIÓN DE AWS Y DESPLIEGUE
