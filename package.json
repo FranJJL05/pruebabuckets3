@@ -1,0 +1,28 @@
+{
+  "name": "pruebabuckets3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FranJJL05/pruebabuckets3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FranJJL05/pruebabuckets3/issues"
+  },
+  "homepage": "https://github.com/FranJJL05/pruebabuckets3#readme",
+  "dependencies": {
+    "jets": "^0.15.0",
+    "jsdoc": "^4.0.5"
+  }
+}

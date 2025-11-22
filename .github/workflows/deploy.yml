@@ -1,0 +1,67 @@
+name: Despliegue prueba S3
+
+on:
+  push:
+    branches: 
+    - develop
+
+jobs:
+  # 1. TRABAJO DE INTEGRACIÓN CONTINUA (CI): Instala y Ejecuta Pruebas
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+          
+      - name: Instalar dependencias
+        run: npm install
+        
+      - name: Ejecutar Pruebas Unitarias
+        # Usa el script 'test' definido en tu package.json
+        run: npm run test
+        
+  # 2. TRABAJO DE DESPLIEGUE CONTINUO (CD)
+  deploy:
+    needs: tests # SOLO se ejecuta si el trabajo 'tests' fue exitoso
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        
+      - name: Configurar Node.js (Necesario para el 'deploy' job)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # GENERACIÓN DE DOCUMENTACIÓN
+      - name: Instalar dependencias para generación de Docs
+        run: npm install 
+        
+      - name: Generar Documentación JSDoc (crea la carpeta 'docs/')
+        # ¡IMPORTANTE! Reemplaza 'your-main-code-file.js' por el nombre de tu archivo de código principal.
+        run: jsdoc ./js/main.js -d docs
+        
+      # CONFIGURACIÓN DE AWS Y DESPLIEGUE
+      - name: Configurar Credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-east-1 
+
+      - name: Despliegue de la Aplicación y Documentación a S3
+        run: |
+          # PERSONALIZAR: Usa la variable de entorno con el nombre del bucket
+          BUCKET=${{ secrets.S3_BUCKET_NAME }}
+          
+          echo "Desplegando archivos de la aplicación a S3"
+          # Sube todo el contenido del repositorio (excluyendo node_modules y git) a la raíz del bucket
+          aws s3 sync ./ s3://$BUCKET/ --exclude "node_modules/*" --exclude ".git/*" --delete
+
+          echo "Desplegando Documentación JSDoc a la subcarpeta /docs"
+          # Sube la documentación generada (carpeta docs/) a una subcarpeta /docs/ del bucket
+          aws s3 sync ./docs/ s3://$BUCKET/docs/ --delete --acl public-read
