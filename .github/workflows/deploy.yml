@@ -19,6 +19,13 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
         
+      - name: Forzar permisos de Ejecución
+        run: |
+          # Forzar permisos para el binario de Mocha
+          chmod +x ./node_modules/.bin/mocha
+          # Forzar permisos para el binario de JSDoc
+          chmod +x ./node_modules/.bin/jsdoc
+      
       - name: Ejecutar Pruebas Unitarias
         # Usa el script 'test' definido en tu package.json
         run: npm run test
