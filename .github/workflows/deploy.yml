@@ -38,12 +38,9 @@ jobs:
           node-version: '20'
 
       # GENERACIÓN DE DOCUMENTACIÓN
-      - name: Instalar dependencias para generación de Docs
-        run: npm install 
-        
       - name: Generar Documentación JSDoc (crea la carpeta 'docs/')
         # ¡IMPORTANTE! Reemplaza 'your-main-code-file.js' por el nombre de tu archivo de código principal.
-        run: npm run docs
+        run: npx jsdoc src/js/index.js -d docs
         
       # CONFIGURACIÓN DE AWS Y DESPLIEGUE
       - name: Configurar Credenciales de AWS
