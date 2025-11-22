@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "npx jest",
-    "docs": "jsdoc main.js -d docs"
+    "docs": "npx jsdoc ./js/main.js -d docs"
   },
   "repository": {
     "type": "git",

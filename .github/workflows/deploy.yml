@@ -43,7 +43,7 @@ jobs:
         
       - name: Generar Documentación JSDoc (crea la carpeta 'docs/')
         # ¡IMPORTANTE! Reemplaza 'your-main-code-file.js' por el nombre de tu archivo de código principal.
-        run: jsdoc ./js/main.js -d docs
+        run: npx jsdoc ./js/main.js -d docs
         
       # CONFIGURACIÓN DE AWS Y DESPLIEGUE
       - name: Configurar Credenciales de AWS
