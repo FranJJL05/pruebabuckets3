@@ -1,67 +1,38 @@
-name: Despliegue prueba S3
-
-on:
-  push:
-    branches: 
-    - develop
-
-jobs:
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-      - name: Instalar dependencias
-        run: npm ci # Instalación necesaria para que Jest funcione
-      - name: Ejecutar Pruebas Unitarias
-        run: npm run test
-        
-  deploy:
-    needs: tests 
+deploy:
+    needs: tests
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
         
-      - name: Configurar Node.js
+      - name: Configurar Node.js (Necesario para el 'deploy' job)
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 🚨 PASO FALTANTE: Instalar dependencias de nuevo en este job 🚨
-      - name: Instalar dependencias para JSDoc y despliegue
+      # INSTALACIÓN Y JSDOC
+      - name: Instalar dependencias para JSDoc
         run: npm ci
 
-      # 🚨 PASO FALTANTE: Forzar permisos de nuevo en este job 🚨
-      - name: Forzar permisos de Ejecución para JSDoc
-        run: chmod +x ./node_modules/.bin/jsdoc
+      - name: Generar Documentación JSDoc
+        run: npm run docs # Esto usa el script corregido que usa 'node'
 
-      # GENERACIÓN DE DOCUMENTACIÓN
-      - name: Generar Documentación JSDoc (crea la carpeta 'docs/')
-        # Ahora JSDoc tiene el binario instalado y los permisos concedidos
-        run: npx jsdoc src/js/main.js -d docs
-        
-      # CONFIGURACIÓN DE AWS Y DESPLIEGUE
+      # CONFIGURACIÓN DE AWS
       - name: Configurar Credenciales de AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1
+          aws-region: us-east-1 
 
+      # DESPLIEGUE A S3 (SIN PARÁMETROS KMS)
       - name: Despliegue de la Aplicación y Documentación a S3
         run: |
-          # PERSONALIZAR: Usa la variable de entorno con el nombre del bucket
           BUCKET=${{ secrets.S3_BUCKET_NAME }}
           
-          echo "Desplegando archivos de la aplicación a S3"
-          # Sube todo el contenido del repositorio (excluyendo node_modules y git) a la raíz del bucket
+          # Despliega archivos de la aplicación
           aws s3 sync ./ s3://$BUCKET/ --exclude "node_modules/*" --exclude ".git/*" --delete
 
-          echo "Desplegando Documentación JSDoc a la subcarpeta /docs"
-          # Sube la documentación generada (carpeta docs/) a una subcarpeta /docs/ del bucket
+          # Despliega Documentación JSDoc
           aws s3 sync ./docs/ s3://$BUCKET/docs/ --delete --acl public-read
