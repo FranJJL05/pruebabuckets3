@@ -42,7 +42,7 @@ jobs:
       # GENERACIÓN DE DOCUMENTACIÓN
       - name: Generar Documentación JSDoc (crea la carpeta 'docs/')
         # Ahora JSDoc tiene el binario instalado y los permisos concedidos
-        run: npx jsdoc src/js/index.js -d docs
+        run: npx jsdoc src/js/main.js -d docs
         
       # CONFIGURACIÓN DE AWS Y DESPLIEGUE
       - name: Configurar Credenciales de AWS
