@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "docs": "jsdoc src/js/main.js -d docs"
+    "docs": "node node_modules/jsdoc/jsdoc.js src/js/main.js -d docs"
   },
   "repository": {
     "type": "git",
