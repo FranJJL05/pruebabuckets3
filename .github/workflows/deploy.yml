@@ -48,5 +48,5 @@ jobs:
       - name: Despliegue de la Aplicación y Documentación a S3
         run: |
           BUCKET=${{ secrets.S3_BUCKET_NAME }}
-          aws s3 sync ./src s3://$BUCKET/ --delete --sse aws:kms
-          aws s3 sync ./docs/ s3://$BUCKET/docs/ --delete --sse aws:kms
+          aws s3 sync ./src s3://$BUCKET/ --delete --sse AES256
+          aws s3 sync ./docs/ s3://$BUCKET/docs/ --delete --sse AES256
