@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "npx jest",
-    "docs": "node node_modules/jsdoc/jsdoc.js src/js/main.js -d docs"
+    "docs": "jsdoc src/js/main.js -d docs"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
     "url": "https://github.com/FranJJL05/pruebabuckets3/issues"
   },
   "homepage": "https://github.com/FranJJL05/pruebabuckets3#readme",
-  "dependencies": {
+  "devDependencies": {
     "jest": "^30.2.0",
     "jsdoc": "^4.0.5"
   }

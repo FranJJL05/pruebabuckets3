@@ -14,7 +14,7 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v4
       - name: Instalar dependencias
-        run: npm ci # Instalación necesaria para que Jest funcione
+        run: npm install
       - name: Ejecutar Pruebas Unitarias
         run: npm run test
         
@@ -26,19 +26,17 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
         
-      - name: Configurar Node.js (Necesario para el 'deploy' job)
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # INSTALACIÓN Y JSDOC
       - name: Instalar dependencias para JSDoc
-        run: npm ci
+        run: npm install
 
       - name: Generar Documentación JSDoc
-        run: npm run docs # Esto usa el script corregido que usa 'node'
+        run: npm run docs
 
-      # CONFIGURACIÓN DE AWS
       - name: Configurar Credenciales de AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -47,13 +45,8 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1 
 
-      # DESPLIEGUE A S3 (SIN PARÁMETROS KMS)
       - name: Despliegue de la Aplicación y Documentación a S3
         run: |
           BUCKET=${{ secrets.S3_BUCKET_NAME }}
-          
-          # Despliega archivos de la aplicación
-          aws s3 sync ./ s3://$BUCKET/ --exclude "node_modules/*" --exclude ".git/*" --delete
-
-          # Despliega Documentación JSDoc
+          aws s3 sync ./src s3://$BUCKET/ --delete
           aws s3 sync ./docs/ s3://$BUCKET/docs/ --delete --acl public-read
