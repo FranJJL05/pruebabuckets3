@@ -31,7 +31,7 @@ jobs:
         run: ./node_modules/.bin/jest
 
       - name: Generar Documentación
-        run: ./node_modules/.bin/jsdoc script.js -d out -r
+        run: ./node_modules/.bin/jsdoc src/js/main.js -d out -r
 
       - name: Subir Documentación como Artefacto
         uses: actions/upload-artifact@v4
