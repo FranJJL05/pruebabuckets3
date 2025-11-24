@@ -1,6 +1,6 @@
 name: CI/CD Despliegue Estático S3
 
-# El workflow se dispara en push a estas ramas
+# El workflow se dispara en push a la rama develop
 on:
   push:
     branches:
@@ -41,8 +41,7 @@ jobs:
 
   # 2. CD (Despliegue Continuo): Despliegue a S3
   deploy:
-    needs: ci # Solo se ejecuta si el job 'ci' ha pasado correctamente
-    # Solo despliega si el push va a las ramas 'dev' o 'main'
+    needs: ci
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -52,10 +51,9 @@ jobs:
       - name: Configurar Credenciales de AWS (Con Token de Sesión)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          # Usamos los 5 Secrets configurados en GitHub
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # ¡Necesario para AWS Academy!
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
       - name: Desplegar a S3 (Sincronización)
