@@ -13,6 +13,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Configurar Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: Instalar dependencias
         run: npm install
       - name: Ejecutar Pruebas Unitarias
@@ -48,5 +50,6 @@ jobs:
       - name: Despliegue de la Aplicación y Documentación a S3
         run: |
           BUCKET=${{ secrets.S3_BUCKET_NAME }}
-          aws s3 sync ./src s3://$BUCKET/ --delete --sse aws:kms
-          aws s3 sync ./docs/ s3://$BUCKET/docs/ --delete --sse aws:kms
+          # Usamos --sse AES256 para forzar cifrado estándar compatible con web pública
+          aws s3 sync ./src s3://$BUCKET/ --delete --sse AES256
+          aws s3 sync ./docs/ s3://$BUCKET/docs/ --delete --sse AES256
