@@ -43,7 +43,7 @@ jobs:
   deploy:
     needs: ci # Solo se ejecuta si el job 'ci' ha pasado correctamente
     # Solo despliega si el push va a las ramas 'dev' o 'main'
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: ⬇Checkout del código
