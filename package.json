@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "npx jest",
-    "docs": "jsdoc ./src/js/main.js -d out -r"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "docs": "node node_modules/jsdoc/jsdoc.js src/js/main.js -d docs"
   },
   "repository": {
     "type": "git",
